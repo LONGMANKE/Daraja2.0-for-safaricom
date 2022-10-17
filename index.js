@@ -16,16 +16,16 @@ app.listen(port, () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cors());
 
-
-  app.get("/token",( req,res, next)=>{
-    getAccessToken();
-  })
+//route for testing
+  // app.get("/token",( req,res, next)=>{
+  //   getAccessToken();
+  // })
   //STEP 1 getting access token
 
-const getAccessToken = async (req, res) => {
-    // const key = process.env.MPESA_CONSUMER_KEY;
-    // const secret = process.env.MPESA_CONSUMER_SECRET;
-    const auth = new Buffer.from("9GKUQe7IBOsxF7f3s3mlInLxevsyWABi:yhMarAPMnb5D6LOS").toString("base64");
+const getAccessToken = async (req, res, next) => {
+    const key = process.env.MPESA_CONSUMER_KEY;
+    const secret = process.env.MPESA_CONSUMER_SECRET;
+    const auth = new Buffer.from(`${key}:${secret}`).toString("base64");
   
     await axios
       .get(
@@ -36,11 +36,11 @@ const getAccessToken = async (req, res) => {
           },
         }
       )
-      .then((token) => {
-        //   res.status(200).json(res.data);
-        // token = res.data.access_token;
-        console.log(token);
-        // next();
+      .then((response) => {
+        // console.log(response.data.access_token);//for testing without data and access_token 
+
+        token = response.data.access_token;
+        next();
       })
       .catch((err) => {
         console.log(err);
@@ -53,7 +53,7 @@ const getAccessToken = async (req, res) => {
     const phone = req.body.phone.substring(1); //formated to 72190........
     const amount = req.body.amount;
 
-res.json({phone,amount})
+// res.json({phone,amount})
   
     const date = new Date();
     const timestamp =
@@ -65,9 +65,7 @@ res.json({phone,amount})
       ("0" + date.getSeconds()).slice(-2);
     const shortCode = process.env.MPESA_PAYBILL;
     const passkey = process.env.MPESA_PASSKEY;
-  
-    const callbackurl = process.env.CALLBACK_URL;
-  
+    const callbackurl = process.env.CALLBACK_URL;   
     const password = new Buffer.from(shortCode + passkey + timestamp).toString(
       "base64"
     );
@@ -84,9 +82,10 @@ res.json({phone,amount})
           PartyA: `254${phone}`,
           PartyB: shortCode,
           PhoneNumber: `254${phone}`,
-          CallBackURL: `${callbackurl}/${process.env.CALLBACK_ROUTE}`,
+          // CallBackURL: `${callbackurl}/${process.env.CALLBACK_ROUTE}`,
+          CallBackURL: "https://longmanecommerce.onrender.com",
           AccountReference: `254${phone}`,
-          TransactionDesc: "Mburu dev",
+          TransactionDesc: "Mburu Hacker",
         },
         {
           headers: {
@@ -94,12 +93,12 @@ res.json({phone,amount})
           },
         }
       )
-      .then((resp) => {
-        // res.json(resp.data);
+      .then((data) => {
+        console.log(data.data);
+        res.status(200).json(data.data);
+         // res.json(resp.data);
         // const data = resp.data;
         // console.log(resp.data);
-        console.log(data);
-        res.status(200).json(data);
       })
       .catch((err) => {
         // res.json(err);
