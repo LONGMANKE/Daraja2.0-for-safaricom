@@ -82,12 +82,12 @@ app.post("/stk", getAccessToken, async (req, res) => {
         PartyA: `254${phone}`,
         PartyB: shortCode,
         PhoneNumber: `254${phone}`,
-        CallBackURL: "https://234b-196-96-190-213.in.ngrok.io/callback",
+        CallBackURL: "https://safdarajatest.onrender.com/callback",
         AccountReference: `254${phone}`, 
         TransactionDesc: "Test", 
       },
       {  
-        headers: {
+        headers: {  
           Authorization: `Bearer ${token}`,
         },
       }
@@ -97,7 +97,7 @@ app.post("/stk", getAccessToken, async (req, res) => {
       res.status(200).json(data.data);
       // res.json(resp.data);
       // const data = resp.data;
-      // console.log(resp.data);
+      // console.log(resp.data); 
     })
     .catch((err) => {
       // res.json(err);
@@ -105,11 +105,19 @@ app.post("/stk", getAccessToken, async (req, res) => {
       res.status(400).json(err.message);
            
     });
+ 
 
 
+});
 app.post("/callback" , (req, res) => {
   const callbackData = req.body;
-  console.log(callbackData); 
+  console.log(callbackData);  
 
+  // if (!callbackData.Body.CallbackMetadata) {
+  //   console.log(callbackData.Body);
+  //   res.status(200).json("ok");
+  //   return;}
+  //   console.log(callbackData.Body.CallbackMetadata)
 });
-});
+
+
